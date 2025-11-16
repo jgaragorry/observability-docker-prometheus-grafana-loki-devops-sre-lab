@@ -190,5 +190,4 @@ Uso libre para:
 ---
 
 # ✨ Fin del README Pedagógico  
-Este es el README final recomendado para tu video de capacitación.
 
