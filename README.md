@@ -1,57 +1,58 @@
-# 🚀 Observability Chaos Lab — Prometheus, Loki, Grafana & Promtail  
-### Un workshop moderno, práctico, reproducible y orientado a DevOps, SRE y SysAdmins que necesitan observar, romper y arreglar sistemas.
+# 📘 Observability Chaos Lab — README Pedagógico (Versión Curso Completa)
 
-## 🧩 Badges & Tecnologías
+## 🚀 Introducción
+Este workshop está diseñado para **estudiantes, DevOps, SRE, SysAdmins y equipos de seguridad** que desean aprender observabilidad moderna desde cero, aplicando caos controlado y correlacionando métricas + logs.
 
-<p align="left">
-  <img src="https://img.shields.io/badge/Prometheus-Monitoring-E6522C?logo=prometheus&logoColor=white" />
-  <img src="https://img.shields.io/badge/Grafana-Visualization-F46800?logo=grafana&logoColor=white" />
-  <img src="https://img.shields.io/badge/Loki-Logs-brightgreen?logo=grafana&logoColor=white" />
-  <img src="https://img.shields.io/badge/Promtail-Log%20Agent-00A98F?logo=grafana&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Linux-Server-000?logo=linux&logoColor=white" />
-  <img src="https://img.shields.io/badge/SRE-Observation-1E88E5?logo=google&logoColor=white" />
-  <img src="https://img.shields.io/badge/DevSecOps-Best%20Practices-6A1B9A?logo=githubactions&logoColor=white" />
-</p>
+El enfoque es **100% pedagógico**, pensado para acompañar tu video/clase y permitir que cualquiera pueda repetir el laboratorio desde cero.
 
-## 🌟 ¿Qué es este Workshop?
+Incluye:
+- Explicación conceptual
+- Flujo pedagógico del workshop
+- Arquitectura visual + ASCII
+- Pasos guiados
+- Tablas explicativas
+- Buenas prácticas DevOps / SRE
+- Scripts automatizados
+- Dashboards profesionales
 
-Este laboratorio es un entorno real y reproducible de observabilidad moderna, diseñado para que cualquier persona pueda:
+---
 
-- Montar un stack completo de métricas y logs con Docker Compose.
-- Visualizar en tiempo real el comportamiento del sistema.
-- Generar caos controlado y ver cómo se refleja en Grafana.
-- Practicar troubleshooting SRE con evidencias (métricas + logs).
-- Aprender buenas prácticas DevOps, SRE y seguridad aplicada.
+# 🎯 1. Objetivo del Workshop
+El objetivo principal es que el estudiante:
+- Comprenda **por qué la observabilidad es clave** en un entorno SRE/DevOps.
+- Arme un **stack completo reproducible** basado en Docker.
+- Visualice métricas y logs en tiempo real.
+- Genere **fallas controladas (chaos)** y observe su impacto.
+- Aplique técnicas reales de troubleshooting profesional.
 
-## 🎯 Objetivos del Workshop
+---
 
-- Entender monitoreo vs observabilidad.
-- Montar un stack con Prometheus, Node Exporter, Loki, Promtail y Grafana.
-- Correlacionar métricas y logs ante fallas reales.
-- Aplicar buenas prácticas de infra reproducible y provisioning automático.
+# 🧠 2. ¿Qué aprenderás?
+- Diferenciar monitoreo vs observabilidad.
+- Montar un stack moderno basado en:
+  - Prometheus (métricas)
+  - Node Exporter (métricas OS)
+  - Loki (logs)
+  - Promtail (agente de logs)
+  - Grafana (visualización)
+- Identificar patrones de falla en métricas.
+- Correlacionar una falla con logs en Loki.
+- Reconocer signos de degradación de un sistema.
+- Aplicar enfoque SRE: SLIs, KPIs, saturación, latencias, backlog.
+- Automatizar flujos DevOps con scripts.
 
-## 👥 ¿A quién va dirigido?
+---
 
-- Estudiantes de DevOps / Cloud / SRE.
-- SysAdmins que quieren actualizarse.
-- Ingenieros que necesitan entender sistemas en producción.
-- Equipos de seguridad que requieren visibilidad del sistema.
-- Instructores que necesiten un laboratorio listo para usar.
+# 🧩 3. Arquitectura del Stack
 
-## 🏗 Arquitectura del Stack
+## 🖼 Diagrama Visual (incluido en assets/)
+![Arquitectura](assets/diagrams/observability-chaos-lab.png)
 
-(Gráfico ASCII incluido en versión original, omitido aquí por longitud.)
+---
 
-## 🧰 Requisitos
+## 📐 Diagrama ASCII PRO
 
-- Linux (Ubuntu recomendado)
-- Docker + Docker Compose
-- Navegador web
-- Opcional: stress-ng
-
-## Diagrama ASCII PRO (Estilo Arquitectura SRE)
-
+```
         +--------------+
         |  Prometheus  | <--- Métricas ---+
         +------┬-------+                  |
@@ -70,81 +71,124 @@ Este laboratorio es un entorno real y reproducible de observabilidad moderna, di
 +--------------┬-------+
                |
                v
-        +------+------+ 
-        |    Loki     |
-        | (logs)      |
         +-------------+
-
-## 📁 Estructura del Proyecto
-La estructura completa ya está incluida en tu repositorio original.
-
-## 🚀 Cómo ejecutar el Workshop
-### 1️⃣ Verificar prerequisitos
-```bash
-bash scripts/01_check_prereqs.sh
+        |    Loki     |
+        |   (logs)    |
+        +-------------+
 ```
-
-### 2️⃣ Iniciar el stack
-```bash
-bash scripts/02_start_stack.sh
-```
-
-### 3️⃣ Acceder a Grafana
-http://localhost:3000  
-Usuario: admin  
-Password: admin  
-
-### 4️⃣ Generar caos
-```bash
-bash scripts/03_generate_chaos.sh
-```
-
-### 5️⃣ Detener el stack
-```bash
-bash scripts/04_stop_stack.sh
-```
-
-## 🧹 Reset completo del laboratorio
-```bash
-bash scripts/05_cleanup_lab.sh
-```
-
-Este script elimina contenedores, volúmenes, imágenes, redes y limpia loki-data/.
-
-## 📚 Documentación extra
-Incluye conceptos básicos, topología del lab y escenarios de caos.
-
-## 🔐 Seguridad
-- Solo para fines educativos.
-- No exponer a Internet.
-- No usar credenciales reales.
-
-## 🗺 Roadmap Fase 2
-- Loki avanzado
-- Alertmanager
-- Tracing distribuido
-- Versión Kubernetes
 
 ---
 
-# 📦 Resumen Técnico del Workshop
+# 🧰 4. Scripts del Workshop (Explicación Pedagógica)
 
-## 🧰 Tabla de Scripts del Workshop
-| Script | Archivo | ¿Qué hace? | Cuándo usarlo |
-|--------|---------|------------|----------------|
-| **01_check_prereqs.sh** | Verifica prerequisitos | Antes del workshop |
-| **02_start_stack.sh** | Levanta el stack | Inicio |
-| **03_generate_chaos.sh** | Genera carga | Durante análisis |
-| **04_stop_stack.sh** | Detiene el stack | Cierre |
-| **05_cleanup_lab.sh** | Limpieza total | Reinicio del workshop |
+| Script | ¿Qué hace? | Explicación pedagógica | Cuándo usarlo |
+|--------|------------|------------------------|----------------|
+| **01_check_prereqs.sh** | Valida Docker + Compose | Evita errores típicos desde el inicio | Antes de todo |
+| **02_start_stack.sh** | Levanta todo el ambiente | Automatiza la infraestructura del workshop | Inicio |
+| **03_generate_chaos.sh** | Genera carga CPU/RAM/Disk | Permite ver reacciones reales del sistema | Durante clase |
+| **04_stop_stack.sh** | Detiene contenedores | Buenas prácticas antes de apagar | Al finalizar |
+| **05_cleanup_lab.sh** | Limpieza total | Deja el ambiente “como nuevo” | Antes de repetir |
 
-## 📊 Tabla de Dashboards Disponibles
-| Dashboard | Archivo | ¿Qué muestra? |
-|----------|---------|----------------|
-| Observability Chaos | observability-chaos-dashboard.json | Base |
-| SRE v1 | sre-observability-dashboard.json | Métricas + logs |
-| SRE Advanced v2 | sre-advanced-observability-dashboard.json | SRE/DevOps avanzado |
+---
 
-## 📩 Licencia
-Uso libre educativo.
+# 📊 5. Dashboards incluidos
+
+| Dashboard | Enfoque | Aprendizaje |
+|----------|---------|--------------|
+| **Observability Chaos Dashboard** | Básico | Entender lo fundamental |
+| **SRE v1** | Intermedio | Métricas + Logs |
+| **SRE Advanced v2** | Avanzado | Troubleshooting profesional |
+
+---
+
+# 🏃 6. Flujo del Workshop (Guía de Clase)
+
+### 🔹 Paso 1 — Explicar conceptos (10 min)
+Monitoreo vs Observabilidad  
+Logs, métricas, trazas  
+Por qué SRE basa decisiones en evidencia
+
+### 🔹 Paso 2 — Revisar arquitectura (5 min)
+Explicar stack  
+Ver el diagrama visual  
+Resaltar responsabilidades
+
+### 🔹 Paso 3 — Levantar el stack (5 min)
+```
+bash scripts/02_start_stack.sh
+```
+Validar endpoints:
+- Grafana
+- Prometheus
+- Node Exporter
+
+### 🔹 Paso 4 — Explorar dashboards (10 min)
+Métricas → CPU, Memoria  
+Logs → Mensajes críticos  
+Correlación temporal
+
+### 🔹 Paso 5 — Generar caos (10 min)
+```
+bash scripts/03_generate_chaos.sh
+```
+Mostrar saturación en tiempo real.
+
+### 🔹 Paso 6 — Troubleshooting guiado (10 min)
+Analizar lo que ocurrió.  
+Correlacionar métricas vs logs.
+
+### 🔹 Paso 7 — Reset completo (5 min)
+```
+bash scripts/05_cleanup_lab.sh
+```
+
+---
+
+# 🔐 7. Buenas Prácticas DevOps/SRE
+- Infra reproducible con scripts
+- Separación configs / código
+- Provisioning automático en Grafana
+- Logs + métricas alineados
+- Carpeta loki-data ignorada en git
+- Dashboard versionable vía JSON
+- Usar stress-ng para caos controlado
+
+---
+
+# 📦 8. Estructura del Proyecto
+
+```
+.
+├── README.md
+├── config/
+├── docker-compose.yml
+├── grafana/
+├── scripts/
+├── docs/
+└── assets/
+```
+
+---
+
+# 🧼 9. Cómo Reiniciar el Workshop Desde Cero
+
+```
+bash scripts/05_cleanup_lab.sh
+bash scripts/02_start_stack.sh
+```
+
+---
+
+# 🏁 10. Licencia
+
+Uso libre para:
+- Estudiantes
+- Instructores
+- Instituciones
+- Workshops profesionales
+
+---
+
+# ✨ Fin del README Pedagógico  
+Este es el README final recomendado para tu video de capacitación.
 
