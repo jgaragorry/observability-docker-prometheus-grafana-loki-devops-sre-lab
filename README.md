@@ -50,8 +50,6 @@ Este laboratorio es un entorno real y reproducible de observabilidad moderna, di
 - Navegador web
 - Opcional: stress-ng
 
----
-
 ## Diagrama ASCII PRO (Estilo Arquitectura SRE)
 
         +--------------+
@@ -72,76 +70,56 @@ Este laboratorio es un entorno real y reproducible de observabilidad moderna, di
 +--------------┬-------+
                |
                v
-        +------+------+
+        +------+------+ 
         |    Loki     |
         | (logs)      |
         +-------------+
 
-
----
-
 ## 📁 Estructura del Proyecto
-
 La estructura completa ya está incluida en tu repositorio original.
 
 ## 🚀 Cómo ejecutar el Workshop
-
 ### 1️⃣ Verificar prerequisitos
-
 ```bash
 bash scripts/01_check_prereqs.sh
 ```
 
 ### 2️⃣ Iniciar el stack
-
 ```bash
 bash scripts/02_start_stack.sh
 ```
 
 ### 3️⃣ Acceder a Grafana
-
 http://localhost:3000  
 Usuario: admin  
 Password: admin  
 
 ### 4️⃣ Generar caos
-
 ```bash
 bash scripts/03_generate_chaos.sh
 ```
 
 ### 5️⃣ Detener el stack
-
 ```bash
 bash scripts/04_stop_stack.sh
 ```
 
 ## 🧹 Reset completo del laboratorio
-
 ```bash
 bash scripts/05_cleanup_lab.sh
 ```
 
-Este script elimina:
-
-- Contenedores
-- Volúmenes
-- Imágenes del lab
-- Red
-- Datos de loki-data/
+Este script elimina contenedores, volúmenes, imágenes, redes y limpia loki-data/.
 
 ## 📚 Documentación extra
-
 Incluye conceptos básicos, topología del lab y escenarios de caos.
 
 ## 🔐 Seguridad
-
-- Este lab es solo para fines educativos.
+- Solo para fines educativos.
 - No exponer a Internet.
 - No usar credenciales reales.
 
 ## 🗺 Roadmap Fase 2
-
 - Loki avanzado
 - Alertmanager
 - Tracing distribuido
@@ -151,60 +129,22 @@ Incluye conceptos básicos, topología del lab y escenarios de caos.
 
 # 📦 Resumen Técnico del Workshop
 
-Esta sección resume los componentes esenciales del laboratorio para uso profesional, auditorías, instructores y documentación interna.
-
----
-
-# 🧰 Tabla de Scripts del Workshop
-
+## 🧰 Tabla de Scripts del Workshop
 | Script | Archivo | ¿Qué hace? | Cuándo usarlo |
 |--------|---------|------------|----------------|
-| **01_check_prereqs.sh** | `scripts/01_check_prereqs.sh` | Verifica que Docker y Docker Compose estén instalados y funcionando sin sudo. | *Siempre antes de iniciar el workshop.* |
-| **02_start_stack.sh** | `scripts/02_start_stack.sh` | Levanta todo el stack: Prometheus, Node Exporter, Loki, Promtail y Grafana. | *Inicio normal del laboratorio.* |
-| **03_generate_chaos.sh** | `scripts/03_generate_chaos.sh` | Genera carga de CPU, IO y memoria usando stress-ng. | *Para ver gráficas y logs reaccionar en tiempo real.* |
-| **04_stop_stack.sh** | `scripts/04_stop_stack.sh` | Detiene el stack pero **sin borrar datos ni imágenes**. | *Cuando terminaste la sesión pero quieres mantener el entorno.* |
-| **05_cleanup_lab.sh** | `scripts/05_cleanup_lab.sh` | **Elimina contenedores, imágenes, la red y limpia loki-data**. Deja todo como fábrica. | *Para reiniciar el workshop desde cero o preparar un aula.* |
+| **01_check_prereqs.sh** | Verifica prerequisitos | Antes del workshop |
+| **02_start_stack.sh** | Levanta el stack | Inicio |
+| **03_generate_chaos.sh** | Genera carga | Durante análisis |
+| **04_stop_stack.sh** | Detiene el stack | Cierre |
+| **05_cleanup_lab.sh** | Limpieza total | Reinicio del workshop |
 
----
+## 📊 Tabla de Dashboards Disponibles
+| Dashboard | Archivo | ¿Qué muestra? |
+|----------|---------|----------------|
+| Observability Chaos | observability-chaos-dashboard.json | Base |
+| SRE v1 | sre-observability-dashboard.json | Métricas + logs |
+| SRE Advanced v2 | sre-advanced-observability-dashboard.json | SRE/DevOps avanzado |
 
-# 📊 Tabla de Dashboards Disponibles
-
-| Dashboard | Archivo | ¿Qué muestra? | Público objetivo |
-|----------|---------|----------------|------------------|
-| **Observability Chaos Dashboard** | `observability-chaos-dashboard.json` | Panel base para ver CPU, RAM y logs del sistema. | Estudiantes iniciales. |
-| **SRE Observability Dashboard (v1)** | `sre-observability-dashboard.json` | Métricas clave: CPU, memoria, red, disco y logs Loki. | SysAdmins / DevOps. |
-| **SRE Advanced Observability Dashboard (v2)** | `sre-advanced-observability-dashboard.json` | Panel SRE completo: health checks, targets caídos, TSDB, SSH events logs y correlación avanzada. | SRE, Arquitectos, Instructores. |
-
----
-
-# 🧩 Arquitectura Modular del Repo
-
-| Carpeta | Contenido | Propósito |
-|---------|-----------|-----------|
-| **config/** | Configs de Prometheus, Loki y Promtail | Separación lógica y fácil mantenimiento |
-| **grafana/provisioning/** | Dashboards + datasources automáticos | Grafana arranca totalmente preconfigurado |
-| **grafana/dashboards/** | JSONs listos para producción | Dashboards SRE y del Workshop |
-| **scripts/** | Automatización del laboratorio | Permite reproducibilidad total |
-| **docs/** | Documentación académica (teoría + caos) | Perfecto para cursos o onboarding |
-| **loki-data/** | Datos de runtime | Ignorados por git; limpieza sencilla |
-| **docker-compose.yml** | Declaración central del stack | Infra reproducible estilo DevOps |
-
----
-
-# 🏁 Estado Final del Repo (v1 estable)
-
-✔ Listo para instructores  
-✔ Listo para estudiantes  
-✔ Provisioning automático  
-✔ Dashboards avanzados incluidos  
-✔ Scripts productivos y didácticos  
-✔ Preparado para Fase 2 (Alertmanager / Tempo / K8s)
-
----
-
-
-## 📄 Licencia
-
-Uso libre para educación y training.
-
+## 📩 Licencia
+Uso libre educativo.
 
