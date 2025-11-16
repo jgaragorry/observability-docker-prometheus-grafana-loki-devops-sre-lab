@@ -1,0 +1,319 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Dashboard SRE avanzado: salud de targets (up), CPU, memoria, disco, estado interno de Prometheus y Loki, y visión de logs de seguridad. Diseñado para el Observability Chaos Lab.",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1659023308421,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "description": "Estado de node_exporter. Debe ser 1 cuando el agente responde correctamente.",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "expr": "avg(up{job=\"node-exporter\"})",
+          "legendFormat": "node-exporter",
+          "refId": "A"
+        }
+      ],
+      "title": "Salud Node Exporter (up)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Estado de Prometheus según la métrica up. Debe ser 1 cuando Prometheus está respondiendo.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "expr": "avg(up{job=\"prometheus\"})",
+          "legendFormat": "prometheus",
+          "refId": "A"
+        }
+      ],
+      "title": "Salud Prometheus (up)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Estado de Loki según la métrica up. Visible solo si Prometheus está scrapeando Loki.",
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "expr": "avg(up{job=\"loki\"})",
+          "legendFormat": "loki",
+          "refId": "A"
+        }
+      ],
+      "title": "Salud Loki (up)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Uso de CPU (%) basado en node_exporter. Útil para ver picos de carga durante el caos.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 4 },
+      "id": 4,
+      "targets": [
+        {
+          "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU {{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Usage (%)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Memoria usada en bytes (total - disponible). Ayuda a detectar leaks o presión de memoria.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 4 },
+      "id": 5,
+      "targets": [
+        {
+          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+          "legendFormat": "Mem Used {{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Memoria Usada",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Uso de disco en filesystems reales, excluyendo tmpfs/overlay/squashfs. Adaptado para entornos containerizados.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 10 },
+      "id": 6,
+      "targets": [
+        {
+          "expr": "(node_filesystem_size_bytes{fstype!~\"tmpfs|overlay|squashfs\"} - node_filesystem_free_bytes{fstype!~\"tmpfs|overlay|squashfs\"})",
+          "legendFormat": "Disk Used {{instance}} {{mountpoint}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Uso de Disco (filesystems reales)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Número de series activas en la TSDB de Prometheus. Útil para entender carga de métricas y cardinalidad.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 10 },
+      "id": 7,
+      "targets": [
+        {
+          "expr": "prometheus_tsdb_head_series",
+          "legendFormat": "TSDB series",
+          "refId": "A"
+        }
+      ],
+      "title": "Prometheus TSDB — Series en memoria",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Estado de todos los targets que scrapea Prometheus. up = 1 (OK), up = 0 (Down).",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 16 },
+      "id": 8,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "expr": "up",
+          "format": "table",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Estado de targets (up: 1 = OK, 0 = Down)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "exported_instance": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": "Loki",
+      "description": "Vista de logs de seguridad relacionados con SSH. Ideal para mostrar correlación entre accesos y métricas del sistema.",
+      "gridPos": { "h": 12, "w": 12, "x": 12, "y": 16 },
+      "id": 9,
+      "targets": [
+        {
+          "expr": "{job=\"system-logs\"} |= \"ssh\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Logs de Seguridad (SSH) — Loki",
+      "type": "logs"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Solo targets caídos (up == 0). Este panel debe estar vacío cuando todo está sano.",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none"
+        }
+      },
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 28 },
+      "id": 10,
+      "options": {
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "expr": "up == 0",
+          "format": "table",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Solo targets caídos (up == 0)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "exported_instance": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": ["sre", "observability", "prometheus", "loki", "advanced"],
+  "templating": { "list": [] },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timezone": "",
+  "title": "SRE — Advanced Observability Dashboard",
+  "version": 2,
+  "weekStart": ""
+}
+

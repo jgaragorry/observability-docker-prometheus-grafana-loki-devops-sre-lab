@@ -1,0 +1,77 @@
+# ============================================================
+# Promtail - Configuración para el Observability Chaos Lab
+# ============================================================
+# Promtail es el "agente de logs" que:
+# - Lee archivos de log (por ejemplo /var/log/*)
+# - Les agrega labels
+# - Los envía a Loki mediante HTTP
+# ============================================================
+
+server:
+  # Puerto HTTP donde Promtail expone /metrics y /ready, etc.
+  # No necesitamos exponerlo hacia afuera, solo sirve dentro del contenedor.
+  http_listen_port: 9080
+
+  # Si no usamos gRPC, podemos dejarlo en 0 para deshabilitarlo.
+  grpc_listen_port: 0
+
+# ------------------------------------------------------------
+# positions:
+# ------------------------------------------------------------
+# Promtail necesita recordar "hasta dónde leyó" en cada archivo de log,
+# para retomar desde ahí y no re-enviar todo cada vez que se reinicia.
+positions:
+  filename: /tmp/positions.yaml
+
+# ------------------------------------------------------------
+# clients:
+# ------------------------------------------------------------
+# Lista de backends a los que Promtail va a enviar logs.
+# En este caso, nuestro Loki corriendo en Docker.
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    # NOTA:
+    # - "loki" es el nombre del servicio definido en docker-compose.yml
+    # - 3100 es el puerto donde Loki expone su API HTTP
+    #
+    # Si Loki tiene autenticación o TLS, aquí se agregan user, password, tls_config, etc.
+
+# ------------------------------------------------------------
+# scrape_configs:
+# ------------------------------------------------------------
+# Aquí definimos "qué logs" queremos leer, con qué labels, y desde dónde.
+scrape_configs:
+  # ───────────────────────────────────────────────────────────
+  # JOB: Logs del sistema (host)
+  # ───────────────────────────────────────────────────────────
+  - job_name: system-logs
+
+    static_configs:
+      - targets:
+          # "localhost" aquí es solo una etiqueta lógica: los logs vienen del host.
+          - localhost
+
+        labels:
+          # "job" es una etiqueta estándar que luego podemos usar en consultas.
+          job: system-logs
+
+          # Puedes usar "host", "instance" o cualquier etiqueta que te ayude
+          # a identificar la máquina origen (en un cluster real serían muchos).
+          host: lab-node
+
+          # Label especial "__path__": define qué archivos leer.
+          # Promtail va a "tail -f" estos paths.
+          __path__: /var/log/*.log
+
+  # ───────────────────────────────────────────────────────────
+  # EJEMPLO: agregar más rutas de logs (opcional)
+  # ───────────────────────────────────────────────────────────
+  # - job_name: "app-logs"
+  #   static_configs:
+  #     - targets:
+  #         - localhost
+  #       labels:
+  #         job: app-logs
+  #         app: demo-api
+  #         __path__: /var/log/myapp/*.log
+

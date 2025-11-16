@@ -1,0 +1,138 @@
+# ============================================================
+# Observability Chaos Lab - Stack de Observabilidad con Docker
+# Prometheus + Node Exporter + Loki + Promtail + Grafana
+# ============================================================
+# Este archivo está pensado para SER LEÍDO por estudiantes.
+# Está lleno de comentarios para entender el "por qué" de cada cosa.
+# ============================================================
+
+# Definimos una red bridge compartida para que todos los servicios
+# se resuelvan por nombre de contenedor (prometheus, loki, grafana, etc).
+networks:
+  observability:
+    driver: bridge
+
+services:
+  # ───────────────────────────────────────────────────────────
+  # PROMETHEUS
+  # ───────────────────────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest          # Imagen oficial de Prometheus
+    container_name: obs-prometheus         # Nombre legible del contenedor
+
+    # Montamos el archivo de configuración desde el host al contenedor.
+    # Esto nos permite versionar la config en Git y modificarla fácilmente.
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+
+    # Sobrescribimos el comando por defecto para apuntar a nuestro archivo.
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+    # Exponemos Prometheus en el puerto 9090 del host.
+    ports:
+      - "9090:9090"
+
+    # Lo conectamos a la red "observability" para que vea al resto por nombre.
+    networks:
+      - observability
+
+    # Opcional (descomentarlo si quieres que se autoreinicie):
+    # restart: unless-stopped
+
+  # ───────────────────────────────────────────────────────────
+  # NODE EXPORTER
+  # ───────────────────────────────────────────────────────────
+  node-exporter:
+    image: prom/node-exporter:latest       # Exporter de métricas del host
+    container_name: obs-node-exporter
+
+    # Exponemos el puerto 9100, donde Node Exporter publica /metrics.
+    ports:
+      - "9100:9100"
+
+    networks:
+      - observability
+    # restart: unless-stopped
+
+  # ───────────────────────────────────────────────────────────
+  # LOKI
+  # ───────────────────────────────────────────────────────────
+  loki:
+    image: grafana/loki:2.9.0              # Versión estable de Loki 2.x
+    container_name: obs-loki
+
+    networks:
+      - observability
+
+    # Usamos la configuración "local-config.yaml" incluida en la imagen.
+    # Esto simplifica mucho el lab y evita errores de configuración al inicio.
+    command: -config.file=/etc/loki/local-config.yaml
+
+    # Si quisieras usar tu propia config+storage persistente (versión avanzada):
+    # volumes:
+    #   - ./config/loki-config.yml:/etc/loki/local-config.yaml
+    #   - ./loki-data:/loki
+
+    # restart: unless-stopped
+
+  # ───────────────────────────────────────────────────────────
+  # PROMTAIL
+  # ───────────────────────────────────────────────────────────
+  promtail:
+    image: grafana/promtail:latest         # Agente que envía logs a Loki
+    container_name: obs-promtail
+
+    volumes:
+      # Montamos los logs del host para que promtail pueda leer /var/log/*
+      - /var/log:/var/log
+
+      # Montamos nuestro archivo de configuración de Promtail
+      # así controlamos qué, cómo y con qué labels se envían los logs.
+      - ./config/promtail-config.yml:/etc/promtail/promtail.yml
+
+    # Forzamos a promtail a usar nuestro archivo de configuración.
+    command: -config.file=/etc/promtail/promtail.yml
+
+    networks:
+      - observability
+    # restart: unless-stopped
+
+  # ───────────────────────────────────────────────────────────
+  # GRAFANA
+  # ───────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest          # Panel de observabilidad
+    container_name: obs-grafana
+
+    # Exponemos Grafana en http://localhost:3000
+    ports:
+      - "3000:3000"
+
+    networks:
+      - observability
+
+    volumes:
+      # Provisioning automático de datasources
+      # (Prometheus + Loki se configuran solos al iniciar Grafana)
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+
+      # Provisioning automático de dashboards
+      # (Grafana sabrá qué JSON cargar y en qué carpeta lógica).
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+
+      # Carpeta local donde almacenamos los JSON de dashboards.
+      # Desde aquí Grafana los leerá cuando los provisionemos.
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+    environment:
+      # Credenciales por defecto de Grafana (para laboratorio).
+      # En producción NUNCA se dejan así.
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+      # (Opcional) Puedes definir el dashboard por defecto que verá el alumno:
+      # - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/observability-chaos-dashboard.json
+
+    # restart: unless-stopped
+

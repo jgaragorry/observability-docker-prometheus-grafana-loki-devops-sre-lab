@@ -1,0 +1,39 @@
+# ============================================================
+# Grafana - Provisioning de Dashboards
+# ============================================================
+# Este archivo indica a Grafana:
+# - Desde qué ruta leer los JSON de dashboards
+# - En qué carpeta (folder) de la UI agruparlos
+# - Cada cuánto revisar cambios en disco
+# ============================================================
+
+apiVersion: 1
+
+providers:
+  - name: "observability-lab"
+    # Identificador interno. Puede ser cualquier string único.
+    orgId: 1
+
+    # Carpeta (folder) lógica dentro de Grafana donde aparecerán los dashboards.
+    folder: "Observability Lab"
+
+    # Tipo "file" indica que los dashboards se toman desde el filesystem.
+    type: file
+
+    # Si true, evita que los dashboards provisionados se puedan borrar
+    # desde la UI por error. Muy útil para labs con alumnos.
+    disableDeletion: true
+
+    # Cada cuántos segundos Grafana revisa si hubo cambios en los JSON.
+    updateIntervalSeconds: 10
+
+    options:
+      # Ruta donde Grafana buscará los JSON de dashboards dentro del contenedor.
+      # Esta ruta debe coincidir con la que montaste en docker-compose:
+      # ./grafana/dashboards:/var/lib/grafana/dashboards
+      path: /var/lib/grafana/dashboards
+
+      # Si quieres que Grafana "capture" también dashboards creados
+      # manualmente desde la UI y los escriba en disco, puedes usar:
+      # foldersFromFilesStructure: true
+

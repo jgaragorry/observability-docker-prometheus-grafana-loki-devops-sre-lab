@@ -1,0 +1,99 @@
+# ============================================================
+# Prometheus - Configuración principal para el Observability Lab
+# ============================================================
+# Este archivo define:
+# - Intervalos globales de scraping
+# - Jobs (targets) que Prometheus observará
+# - Cómo identificar instancias y servicios
+# ============================================================
+
+global:
+  # Cada cuánto tiempo Prometheus va a "scrapear" (consultar) los targets.
+  # 15s es un buen valor para laboratorio: suficientemente frecuente
+  # para ver cambios, sin sobrecargar un entorno pequeño.
+  scrape_interval: 15s
+
+  # Cada cuánto se evalúan las reglas (si tuviéramos alertas definidas).
+  evaluation_interval: 15s
+
+  # Puedes definir etiquetas que se agregan a TODAS las métricas.
+  # Útil en entornos multi-entorno (dev, stage, prod).
+  external_labels:
+    environment: "lab-observability"
+
+# Aquí podríamos definir reglas de alerting si tuviéramos un Alertmanager.
+# rule_files:
+#   - "alert-rules.yml"
+
+# ============================================================
+# scrape_configs: ¿qué va a monitorear Prometheus?
+# ============================================================
+
+scrape_configs:
+  # ───────────────────────────────────────────────────────────
+  # JOB: Prometheus
+  # ───────────────────────────────────────────────────────────
+  # Prometheus se monitorea a sí mismo.
+  # Esto permite ver:
+  # - series que está manejando
+  # - uso de memoria
+  # - tiempos de scrape
+  # - estado general del propio servidor Prometheus.
+  - job_name: "prometheus"
+
+    # Para entornos simples usamos static_configs.
+    # Dentro de Docker, el nombre 'prometheus' es el nombre del servicio
+    # definido en docker-compose.yml (NO el container_name).
+    static_configs:
+      - targets:
+          - "prometheus:9090"
+
+  # ───────────────────────────────────────────────────────────
+  # JOB: Node Exporter
+  # ───────────────────────────────────────────────────────────
+  # Esto nos permite ver:
+  # - CPU
+  # - RAM
+  # - disco
+  # - red
+  # del host (o del contenedor que esté exportando métricas).
+  - job_name: "node-exporter"
+
+    static_configs:
+      - targets:
+          - "node-exporter:9100"
+        labels:
+          # Podemos agregar etiquetas extras para identificar el origen.
+          role: "system-metrics"
+          instance: "lab-node"
+
+  # ───────────────────────────────────────────────────────────
+  # JOB: Loki
+  # ───────────────────────────────────────────────────────────
+  # Loki también expone métricas (internas) en /metrics.
+  # Aquí podemos observar:
+  # - estado del ingestor
+  # - uso de memoria
+  # - rendimiento del backend de logs
+  - job_name: "loki"
+
+    static_configs:
+      - targets:
+          - "loki:3100"
+        labels:
+          role: "logs-backend"
+
+  # ───────────────────────────────────────────────────────────
+  # EJEMPLO: agregar más jobs (opcional)
+  # ───────────────────────────────────────────────────────────
+  # Si más adelante quieres que tus alumnos monitoreen otros
+  # servicios (por ejemplo una API en Node.js, Nginx, etc.),
+  # puedes agregar nuevos jobs aquí.
+  #
+  # - job_name: "mi-api"
+  #   static_configs:
+  #     - targets:
+  #         - "mi-api:8080"
+  #       labels:
+  #         app: "mi-api-demo"
+

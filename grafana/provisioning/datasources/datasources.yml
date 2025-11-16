@@ -1,0 +1,39 @@
+# ============================================================
+# Grafana - Provisioning de Data Sources
+# ============================================================
+# Este archivo hace que, cuando Grafana arranque:
+# - Cree automáticamente el datasource de Prometheus
+# - Cree automáticamente el datasource de Loki
+# - Opcionalmente marque uno como "default"
+# ============================================================
+
+apiVersion: 1
+
+datasources:
+  # ───────────────────────────────────────────────────────────
+  # Datasource: Prometheus
+  # ───────────────────────────────────────────────────────────
+  - name: Prometheus
+    type: prometheus
+    access: proxy             # Grafana hace las peticiones desde el backend
+    url: http://prometheus:9090
+    isDefault: true           # Será el datasource por defecto en Grafana
+    editable: false           # Evita que los alumnos lo rompan sin querer
+
+    # Puedes agregar etiquetas que aparecen en la UI de Grafana
+    jsonData:
+      timeInterval: "15s"     # Intervalo sugerido por defecto en paneles
+
+  # ───────────────────────────────────────────────────────────
+  # Datasource: Loki
+  # ───────────────────────────────────────────────────────────
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    editable: false
+
+    jsonData:
+      # "maxLines" controla cuántas líneas se devuelven por defecto
+      maxLines: 1000
+

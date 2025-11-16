@@ -1,0 +1,81 @@
+# ======================================================
+# .gitignore — Observability Chaos Lab
+# Mantiene el repo limpio, seguro y reproducible
+# ======================================================
+
+# -----------------------------
+# 🗄 Carpetas de datos (runtime)
+# -----------------------------
+# Loki: datos generados en tiempo de ejecución
+loki-data/
+loki-data/*
+
+# Grafana: datos temporales (si agregas persistencia luego)
+grafana-data/
+grafana-data/*
+
+# -----------------------------
+# 🐳 Docker
+# -----------------------------
+# Archivos de estado temporales de Docker
+*.tar
+*.docker
+docker-compose.override.yml
+
+# Evita subir volúmenes exportados
+volumes/
+volumes/*
+
+# -----------------------------
+# 📦 Archivos comprimidos
+# -----------------------------
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# -----------------------------
+# 📝 Logs y archivos sensibles
+# -----------------------------
+*.log
+*.out
+*.err
+
+# Evita logs del sistema montados
+var/log/*
+logs/*
+*.pid
+
+# -----------------------------
+# ⚙ Archivos de sistema
+# -----------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -----------------------------
+# 🧪 Archivos temporales
+# -----------------------------
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*.old
+
+# -----------------------------
+# 🖥 Archivos de editor
+# -----------------------------
+.vscode/
+.idea/
+*.iml
+
+# -----------------------------
+# 🧬 Python (por si en el futuro agregas herramientas)
+# -----------------------------
+__pycache__/
+*.pyc
+*.pyo
+
+# ------------
+
